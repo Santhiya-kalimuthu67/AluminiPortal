@@ -1,4 +1,4 @@
-import { apiUrl } from "../config/apiendpints"
+
 import api from "./api.axios.js";
 
 
