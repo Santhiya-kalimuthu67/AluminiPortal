@@ -4,19 +4,40 @@ import AlumniProfile from "../models/AluminiProfile.js";
 
 export const upsertStudentProfile = async (req, res) => {
   try {
+    const updateData = {
+      ...req.body,
+      skills: req.body.skills
+        ? req.body.skills.split(",").map((s) => s.trim())
+        : [],
+    };
+
+    if (req.files?.profilePic?.[0]) {
+      updateData.profilePhoto =
+        req.files.profilePic[0].path;
+    }
+
+    if (req.files?.resume?.[0]) {
+      updateData.resume =
+        req.files.resume[0].path;
+    }
+
     const profile = await StudentProfile.findOneAndUpdate(
       { userId: req.user.id },
+      updateData,
       {
-        ...req.body,
-        skills: req.body.skills?.split(",").map(s => s.trim()),
-        profilePhoto: req.files?.profilePic?.[0]?.path,
-        resume: req.files?.resume?.[0]?.path
-      },
-      { new: true, upsert: true }
+        new: true,
+        upsert: true,
+        runValidators: true,
+      }
     );
+
     res.json(profile);
-  } catch {
-    res.status(500).json({ message: "Student profile save failed" });
+  } catch (error) {
+    console.error("Student profile save failed:", error);
+
+    res.status(500).json({
+      message: "Student profile save failed",
+    });
   }
 };
 

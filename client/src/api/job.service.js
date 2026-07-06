@@ -11,10 +11,11 @@ export const getJobById = async (id) => {
   return data;
 };
 
-export const applyJob = async ({ jobId, studentId, resume, coverLetter }) => {
+export const applyJob = async ({ jobId, coverLetter }) => {
   const res = await api.post(
     `/applications/apply/${jobId}`,
-    { studentId, resume, coverLetter }
+    { coverLetter }
   );
+
   return res.data;
 };
